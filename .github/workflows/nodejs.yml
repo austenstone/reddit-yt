@@ -24,7 +24,7 @@ jobs:
       - name: Lint
         run: npm run lint
       - name: Build
-        run: npm run build --prod
+        run: npm run build --prod --repo=https://github.com/astone2014/reddit-yt --base-href=https://astone2014.github.io/reddit-yt --deploy-href=https://astone2014.github.io/reddit-yt
       - name: Check GitHub Pages Status
         uses: crazy-max/ghaction-github-status@v1
         with:
