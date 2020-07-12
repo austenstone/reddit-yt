@@ -5,7 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "deploy": "ng deploy",
+    "deploy": "ng deploy --repo=https://github.com/astone2014/reddit-yt.git --name=astone2014 --email=miltonlaxer@gmail.com",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
