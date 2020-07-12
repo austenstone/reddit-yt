@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { RedditVideoStorage } from "./watch/watch.component";
+import { RedditVideoStorage } from './watch/watch.component';
 
 @Injectable({
   providedIn: 'root'

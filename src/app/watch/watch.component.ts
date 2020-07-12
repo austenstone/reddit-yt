@@ -1,12 +1,12 @@
 import { Component, OnInit, ViewChild, HostListener } from '@angular/core';
-import { RedditService } from "../reddit.service";
+import { RedditService } from '../reddit.service';
 import { ChildData, Reddit } from '../reddit.types';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { YouTubePlayer } from '@angular/youtube-player';
 import { Observable, from, of } from 'rxjs';
 import { map, switchMap, filter, repeat, expand, takeUntil, takeWhile, take, startWith, tap, throttleTime, finalize } from 'rxjs/operators';
 import { MatSelectChange } from '@angular/material/select';
-import { StorageService } from "../storage.service";
+import { StorageService } from '../storage.service';
 import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
 import { BreakpointObserver } from '@angular/cdk/layout';
 
@@ -26,10 +26,23 @@ export interface RedditVideoStorage {
   styleUrls: ['./watch.component.scss']
 })
 export class WatchComponent implements OnInit {
+
+  constructor(
+    private redditService: RedditService,
+    private snackBar: MatSnackBar,
+    private storageService: StorageService,
+    private breakpointObserver: BreakpointObserver
+  ) {
+    this.breakpointObserver.isMatched('(max-width: 800px)');
+    this.breakpointObserver.observe(['(max-width: 800px)']).subscribe((result) => {
+      this.isMobile = !result.matches;
+      this.toolbarBottom = result.matches;
+    });
+  }
   currentVideo: RedditVideo;
-  currentSubreddit: string = 'videos';
-  customSubreddit: boolean = false;
-  subreddits: string[] = ['videos', 'music', 'listen', 'volkswagen', 'audi', 'funny']
+  currentSubreddit = 'videos';
+  customSubreddit = false;
+  subreddits: string[] = ['videos', 'music', 'listen', 'volkswagen', 'audi', 'funny'];
   videos: RedditVideo[] = [];
   storedVideos: RedditVideoStorage[];
   @ViewChild(YouTubePlayer) youtubePlayer: YouTubePlayer;
@@ -37,6 +50,9 @@ export class WatchComponent implements OnInit {
   isMobile;
   @ViewChild('contextMenuClick') contextMenu: MatMenuTrigger;
   @ViewChild('saveMenuClick') saveMenu: MatMenuTrigger;
+
+
+  contextMenuPosition = { x: '0px', y: '0px' };
   @HostListener('window:keydown', ['$event']) onKeydownEvent(event: KeyboardEvent): void {
     switch (event.key) {
       case ' ':
@@ -52,30 +68,17 @@ export class WatchComponent implements OnInit {
         if (event.shiftKey) {
           this.playPreviousVideo();
         } else {
-          this.youtubePlayer.seekTo(this.youtubePlayer.getCurrentTime() - 15, true)
+          this.youtubePlayer.seekTo(this.youtubePlayer.getCurrentTime() - 15, true);
         }
         break;
       case 'ArrowRight':
         if (event.shiftKey) {
           this.playNextVideo();
         } else {
-          this.youtubePlayer.seekTo(this.youtubePlayer.getCurrentTime() + 15, true)
+          this.youtubePlayer.seekTo(this.youtubePlayer.getCurrentTime() + 15, true);
         }
         break;
     }
-  }
-
-  constructor(
-    private redditService: RedditService,
-    private snackBar: MatSnackBar,
-    private storageService: StorageService,
-    private breakpointObserver: BreakpointObserver
-  ) {
-    this.breakpointObserver.isMatched('(max-width: 800px)');
-    this.breakpointObserver.observe(['(max-width: 800px)']).subscribe((result) => {
-      this.isMobile = !result.matches;
-      this.toolbarBottom = result.matches;
-    });
   }
 
   ngOnInit(): void {
@@ -93,8 +96,7 @@ export class WatchComponent implements OnInit {
           if (child.data.is_video || child.data.media) {
             const youtubeId = youtube_parser(child.data.url);
             if (youtubeId) {
-              const video: RedditVideo = { youtubeId, ...child.data };
-              videos.push(video);
+              videos.push({ youtubeId, ...child.data });
             }
           }
         });
@@ -103,10 +105,10 @@ export class WatchComponent implements OnInit {
     );
   }
 
-  loadMore() {
+  loadMore(): void {
     const lastVideo = this.videos[this.videos.length - 1];
     if (lastVideo) {
-      this.getVideos(this.currentSubreddit, lastVideo.name).subscribe((videos) => this.videos = this.videos.concat(videos))
+      this.getVideos(this.currentSubreddit, lastVideo.name).subscribe((videos) => this.videos = this.videos.concat(videos));
     }
   }
 
@@ -147,38 +149,38 @@ export class WatchComponent implements OnInit {
       tap((videos) => this.videos = this.videos.concat(videos)),
       finalize(() => {
         this.videos.forEach((video) => {
-          const found = this.storedVideos.find((v) => v.youtubeId === video.youtubeId)
-          Object.assign(video, found);
-        })
+          const foundStored = this.storedVideos.find((v) => v.youtubeId === video.youtubeId);
+          Object.assign(video, foundStored);
+        });
         const found = this.videos.find((v) => !v.watched);
         this.selectVideo(found?.youtubeId || this.videos[0].youtubeId);
       })
-    )
+    );
   }
 
-  openSnackBar(message: string) {
+  openSnackBar(message: string): void {
     this.snackBar.open(message, 'DISMISS', {
       duration: 3333,
       verticalPosition: this.toolbarBottom ? 'top' : 'bottom'
     });
   }
 
-  setCustomSubreddit(e) {
+  setCustomSubreddit(e): void {
     this.customSubreddit = true;
     e.preventDefault();
   }
 
-  onSubredditChange(event: MatSelectChange) {
+  onSubredditChange(event: MatSelectChange): void {
     this.videos = [];
     this.currentSubreddit = event.value;
     this.changeSubreddit(this.currentSubreddit).subscribe();
   }
 
-  onPlayerReady(event: YT.PlayerEvent) {
+  onPlayerReady(event: YT.PlayerEvent): void {
     event.target.playVideo();
   }
 
-  onPlayerStateChange(event: YT.OnStateChangeEvent) {
+  onPlayerStateChange(event: YT.OnStateChangeEvent): void {
     switch (event.data) {
       case YT.PlayerState.PLAYING:
         break;
@@ -193,7 +195,7 @@ export class WatchComponent implements OnInit {
     }
   }
 
-  markVideo(videoId: RedditVideo, state: string) {
+  markVideo(videoId: RedditVideo, state: string): void {
     switch (state) {
       case 'UNWATCHED':
         videoId.watched = false;
@@ -214,17 +216,17 @@ export class WatchComponent implements OnInit {
     }
   }
 
-  playVideo() {
+  playVideo(): void {
     this.currentVideo.playing = true;
     this.youtubePlayer.playVideo();
   }
 
-  pauseVideo() {
+  pauseVideo(): void {
     this.currentVideo.playing = false;
     this.youtubePlayer.pauseVideo();
   }
 
-  playPreviousVideo() {
+  playPreviousVideo(): void {
     const foundIndex = this.videos.findIndex((v) => this.currentVideo.youtubeId === v.youtubeId);
     const nextVideo = this.videos[foundIndex - 1];
     if (nextVideo) {
@@ -232,7 +234,7 @@ export class WatchComponent implements OnInit {
     }
   }
 
-  playNextVideo() {
+  playNextVideo(): void {
     const foundIndex = this.videos.findIndex((v) => this.currentVideo.youtubeId === v.youtubeId);
     const nextVideo = this.videos[foundIndex + 1];
     if (nextVideo) {
@@ -240,16 +242,16 @@ export class WatchComponent implements OnInit {
     }
   }
 
-  private initYouTube() {
+  private initYouTube(): void {
     // This code loads the IFrame Player API code asynchronously, according to the instructions at
     // https://developers.google.com/youtube/iframe_api_reference#Getting_Started
     const tag = document.createElement('script');
 
-    tag.src = "https://www.youtube.com/iframe_api";
+    tag.src = 'https://www.youtube.com/iframe_api';
     document.body.appendChild(tag);
   }
 
-  saveVideos() {
+  saveVideos(): void {
     this.openSnackBar('Saved your 🎥 history');
     this.storageService.storeVideos(this.videos.map((v) => {
       return {
@@ -257,23 +259,20 @@ export class WatchComponent implements OnInit {
         playing: v.playing,
         watched: v.watched,
         finished: v.finished,
-      }
+      };
     }));
   }
 
-  clearWatchHistory() {
+  clearWatchHistory(): void {
     this.videos.forEach((v) => {
       v.playing = false;
       v.watched = false;
       v.finished = false;
-    })
+    });
     this.storageService.storeVideos([]);
   }
 
-
-  contextMenuPosition = { x: '0px', y: '0px' };
-
-  openContextMenu(event: MouseEvent, item: RedditVideo) {
+  openContextMenu(event: MouseEvent, item: RedditVideo): void {
     event.preventDefault();
     this.contextMenuPosition.x = event.clientX + 'px';
     this.contextMenuPosition.y = event.clientY + 'px';
@@ -284,8 +283,8 @@ export class WatchComponent implements OnInit {
 
 }
 
-function youtube_parser(url) {
-  var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
-  var match = url.match(regExp);
-  return (match && match[7].length == 11) ? match[7] : false;
+function youtube_parser(url): string {
+  const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[7].length === 11) ? match[7] : null;
 }

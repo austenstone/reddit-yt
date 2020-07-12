@@ -160,11 +160,11 @@ export interface AllAwarding {
 }
 
 export enum AwardSubType {
-  Global = "GLOBAL",
+  Global = 'GLOBAL',
 }
 
 export enum AwardType {
-  Global = "global",
+  Global = 'global',
 }
 
 export interface ResizedIcon {
@@ -174,13 +174,13 @@ export interface ResizedIcon {
 }
 
 export enum FlairType {
-  Text = "text",
+  Text = 'text',
 }
 
 export enum Domain {
-  MYoutubeCOM = "m.youtube.com",
-  YoutuBe = "youtu.be",
-  YoutubeCOM = "youtube.com",
+  MYoutubeCOM = 'm.youtube.com',
+  YoutuBe = 'youtu.be',
+  YoutubeCOM = 'youtube.com',
 }
 
 export interface Gildings {
@@ -190,7 +190,7 @@ export interface Gildings {
 }
 
 export enum LinkFlairTextColor {
-  Dark = "dark",
+  Dark = 'dark',
 }
 
 export interface Media {
@@ -217,11 +217,11 @@ export interface Oembed {
 }
 
 export enum ProviderName {
-  YouTube = "YouTube",
+  YouTube = 'YouTube',
 }
 
 export enum Type {
-  Video = "video",
+  Video = 'video',
 }
 
 export interface MediaEmbed {
@@ -233,12 +233,12 @@ export interface MediaEmbed {
 }
 
 export enum WhitelistStatus {
-  AllAds = "all_ads",
-  PromoAdultNsfw = "promo_adult_nsfw",
+  AllAds = 'all_ads',
+  PromoAdultNsfw = 'promo_adult_nsfw',
 }
 
 export enum PostHint {
-  RichVideo = "rich:video",
+  RichVideo = 'rich:video',
 }
 
 export interface Preview {
@@ -264,21 +264,21 @@ export interface Nsfw {
 }
 
 export enum Subreddit {
-  Videos = "videos",
+  Videos = 'videos',
 }
 
 export enum SubredditID {
-  T52Qh1E = "t5_2qh1e",
+  T52Qh1E = 't5_2qh1e',
 }
 
 export enum SubredditNamePrefixed {
-  RVideos = "r/videos",
+  RVideos = 'r/videos',
 }
 
 export enum SubredditType {
-  Public = "public",
+  Public = 'public',
 }
 
 export enum Kind {
-  T3 = "t3",
+  T3 = 't3',
 }

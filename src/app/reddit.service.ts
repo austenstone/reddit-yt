@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpClient, HttpParams } from "@angular/common/http";
-import { Reddit } from "./reddit.types";
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Reddit } from './reddit.types';
 
 
 
@@ -23,6 +23,6 @@ export class RedditService {
     if (before) {
       params = params.append('before', after);
     }
-    return this.http.get<Reddit>(`${this.REDDIT_URL}/r/${subreddit}/hot.json`, { params: params });
+    return this.http.get<Reddit>(`${this.REDDIT_URL}/r/${subreddit}/hot.json`, { params });
   }
 }
