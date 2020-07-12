@@ -2,7 +2,7 @@
 
 Watch reddit like TV!
 
-<p align="center"><img alt="logo" src="https://aithority.com/wp-content/uploads/2018/06/telit.jpg"></p>
+<p align="center"><img alt="logo" src="https://watch.austen.info/assets/img/reddit-yt-logo-circle.png"></p>
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.0.2.
 
