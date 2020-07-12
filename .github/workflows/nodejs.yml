@@ -24,16 +24,6 @@ jobs:
       - name: Lint
         run: npm run lint
       - name: Build
-        run: npm run build -- --prod
-      - name: Check GitHub Pages status
-        uses: crazy-max/ghaction-github-status@v1
-        with:
-          pages_threshold: major_outage
-      - name: Deploy to GitHub Pages
-        if: success()
-        uses: crazy-max/ghaction-github-pages@v2
-        with:
-          target_branch: gh-pages
-          build_dir: dist/reddit-yt
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run build --prod
+      - name: Deploy
+        run: npm run deploy
