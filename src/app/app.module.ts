@@ -8,6 +8,8 @@ import { WatchComponent } from './watch/watch.component';
 import { YouTubePlayerModule } from '@angular/youtube-player';
 import { HttpClientModule } from '@angular/common/http';
 import { DemoMaterialModule } from "./material.module";
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -20,7 +22,8 @@ import { DemoMaterialModule } from "./material.module";
     BrowserAnimationsModule,
     YouTubePlayerModule,
     HttpClientModule,
-    DemoMaterialModule
+    DemoMaterialModule,
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [],
   bootstrap: [AppComponent]

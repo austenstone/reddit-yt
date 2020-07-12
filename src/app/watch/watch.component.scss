@@ -1,3 +1,10 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
 .player {
   width: 100%;
   height: 100%;
@@ -10,28 +17,9 @@ mat-drawer-container {
   height: 100%;
 }
 
-.overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-}
-
-.side-open {
-  cursor: pointer;
-  width: 25px;
-  height: 100%;
-  background: transparent;
-  transition: ease-in 0.15s;
-}
-
-.side-open:hover {
-  width: 50px;
-  background: #424242;
-}
-
 mat-drawer {
   width: 225px;
+  background: #181818;
 
   .drawer-container {
     display: flex;
@@ -43,10 +31,66 @@ mat-drawer {
   mat-grid-list {
     width: 100%;
   }
+
+  mat-form-field {
+    margin-top: 10px;
+    width: 100%;
+  }
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.hide-toolbar {
+  height: 0;
 }
 
 .video-thumbnail {
   background-size: cover;
   background-position: center;
   cursor: pointer;
+}
+
+.video-thumbnail:before {
+  display: block;
+  content: "";
+  background: rgba(0, 0, 0, 0.66);
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: 0.15s ease-in-out;
+}
+.video-thumbnail:hover:before {
+  background: transparent;
+}
+
+.watched.video-thumbnail:before {
+  // background: rgba(0, 0, 0, 0.66);
+}
+
+.playing.video-thumbnail:before {
+  background: transparent;
+}
+
+.banner {
+  margin-right: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  img {
+    height: 30px;
+    margin-right: 5px;
+  }
+
+  @media only screen and (max-width: 600px) {
+    margin-right: 0px;
+  }
+}
+
+.toolbar-bottom {
+  order: 2;
 }

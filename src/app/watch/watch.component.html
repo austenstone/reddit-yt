@@ -1,5 +1,54 @@
+<mat-toolbar [class.toolbar-bottom]="toolbarBottom">
+  <button *ngIf="isMobile" mat-icon-button (click)="drawer.toggle()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <div class="banner" (click)="drawer.toggle()">
+    <img src="assets/img/reddit-yt-logo-circle.png">
+    <span *ngIf="isMobile">Reddit TV</span>
+  </div>
+  <span class="spacer"></span>
+  <button mat-icon-button>
+    <mat-icon>skip_previous</mat-icon>
+  </button>
+  <button mat-icon-button (click)="youtubePlayer.seekTo(youtubePlayer.getCurrentTime() - 15, true)">
+    <mat-icon>fast_rewind</mat-icon>
+  </button>
+  <button mat-icon-button (click)="currentVideo?.playing ? pauseVideo() : playVideo()">
+    <mat-icon>{{currentVideo?.playing ? 'pause' : 'play_arrow'}}</mat-icon>
+  </button>
+  <button mat-icon-button (click)="youtubePlayer.seekTo(youtubePlayer.getCurrentTime() + 15, true)">
+    <mat-icon>fast_forward</mat-icon>
+  </button>
+  <button mat-icon-button (click)="playNextVideo()">
+    <mat-icon>skip_next</mat-icon>
+  </button>
+  <button mat-icon-button (click)="youtubePlayer.seekTo(0, true)">
+    <mat-icon>replay</mat-icon>
+  </button>
+  <button mat-icon-button [matMenuTriggerFor]="volumeMenu">
+    <mat-icon>volume_up</mat-icon>
+  </button>
+  <mat-menu #volumeMenu="matMenu">
+    <mat-slider vertical [value]="youtubePlayer?.getVolume()" (input)="youtubePlayer.setVolume($event.value)">
+    </mat-slider>
+  </mat-menu>
+  <button mat-icon-button (click)="toolbarBottom = !toolbarBottom">
+    <mat-icon>{{toolbarBottom ? 'expand_less' : 'expand_more'}}</mat-icon>
+  </button>
+  <button mat-icon-button (contextmenu)="saveMenuClick.openMenu()" [matMenuTriggerFor]="saveMenu"
+    #saveMenuClick="matMenuTrigger">
+    <mat-icon>save</mat-icon>
+  </button>
+  <mat-menu #saveMenu="matMenu">
+    <button mat-menu-item (click)="clearWatchHistory()">
+      <mat-icon>history</mat-icon>
+      Clear Watch History
+    </button>
+  </mat-menu>
+</mat-toolbar>
+
 <mat-drawer-container class="example-container" autosize>
-  <mat-drawer #drawer mode="side" opened>
+  <mat-drawer #drawer mode="side" [opened]="this.isMobile">
     <div class="drawer-container">
       <mat-form-field>
         <span matPrefix>/r/</span>
@@ -18,10 +67,15 @@
         <mat-icon (click)="changeSubreddit(currentSubreddit)">delete</mat-icon>
       </mat-form-field>
 
-      <mat-grid-list cols="2" rowHeight="2:1">
-        <mat-grid-tile class="video-thumbnail" *ngFor="let video of videos"
-          [style.backgroundImage]="'url(' + video.media.oembed.thumbnail_url + ')'" [matTooltip]="video.title"
-          (click)="selectVideo(video.youtubeId)">
+      <mat-grid-list cols="1" rowHeight="2:1">
+        <mat-grid-tile class="video-thumbnail" *ngFor="let video of videos" [class.playing]="video.playing"
+          [class.watched]="video.watched" [style.backgroundImage]="'url(' + video.media.oembed.thumbnail_url + ')'"
+          [matTooltip]="video.title" (click)="selectVideo(video.youtubeId)"
+          (contextmenu)="openContextMenu($event, video)">
+          <mat-icon>
+            {{video.playing ? 'play_arrow' : (video.finished) ? 'done_all' : (video.watched) ? 'visibility' : ''}}
+          </mat-icon>
+
         </mat-grid-tile>
       </mat-grid-list>
       <button mat-button (click)="loadMore()">Load More</button>
@@ -32,8 +86,44 @@
     <youtube-player (ready)="onPlayerReady($event)" (stateChange)="onPlayerStateChange($event)" width="100%"
       height="100%" [videoId]="currentVideo?.youtubeId"></youtube-player>
   </div>
-
-  <div class="overlay">
-    <div class="side-open" (click)="drawer.toggle()"></div>
-  </div>
 </mat-drawer-container>
+
+<div style="position: fixed" style="visibility: hidden; position: fixed" [style.left]="contextMenuPosition.x"
+  [style.top]="contextMenuPosition.y" #contextMenuClick="matMenuTrigger" [matMenuTriggerFor]="contextMenu"></div>
+<mat-menu #contextMenu="matMenu">
+  <ng-template matMenuContent let-item="item">
+    <button mat-menu-item (click)="this.selectVideo(item.youtubeId)">
+      <mat-icon>play_arrow</mat-icon>
+      Play
+    </button>
+    <button disabled mat-menu-item (click)="item.watched = false">
+      <mat-icon>queue_play_next</mat-icon>
+      Play Next
+    </button>
+    <button disabled mat-menu-item (click)="item.watched = false">
+      <mat-icon>add_to_queue</mat-icon>
+      Add to Queue
+    </button>
+
+    <button *ngIf="item.finished; else notFinished" mat-menu-item (click)="markVideo(item, 'UNWATCHED')">
+      <mat-icon>done_all</mat-icon>
+      Clear Finished
+    </button>
+    <ng-template #notFinished>
+      <button mat-menu-item (click)="markVideo(item, 'FINISHED')">
+        <mat-icon>done_all</mat-icon>
+        Mark Finished
+      </button>
+      <button *ngIf="item.watched; else notWatched" mat-menu-item (click)="markVideo(item, 'UNWATCHED')">
+        <mat-icon>visibility_off</mat-icon>
+        Clear Watched
+      </button>
+      <ng-template #notWatched>
+        <button mat-menu-item (click)="markVideo(item, 'WATCHED')">
+          <mat-icon>visibility</mat-icon>
+          Mark Watched
+        </button>
+      </ng-template>
+    </ng-template>
+  </ng-template>
+</mat-menu>

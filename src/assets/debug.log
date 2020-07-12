@@ -1,0 +1,3 @@
+[0712/154209.386:ERROR:crash_report_database_win.cc(580)] CreateDirectory \\wsl$\Ubuntu\mnt\undefined\Users\undefined\AppData\Local\lighthouse.26717661\Crashpad: Access is denied. (0x5)
+[0712/154209.390:ERROR:registration_protocol_win.cc(131)] TransactNamedPipe: The pipe has been ended. (0x6D)
+[0712/154209.393:ERROR:crash_report_database_win.cc(580)] CreateDirectory \\wsl$\Ubuntu\mnt\undefined\Users\undefined\AppData\Local\lighthouse.26717661\Crashpad: Access is denied. (0x5)
