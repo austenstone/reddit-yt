@@ -33,6 +33,6 @@ jobs:
         uses: crazy-max/ghaction-github-pages@v2
         with:
           target_branch: gh-pages
-          build_dir: dist/reddit-yt
+          build_dir: dist/austen-stone-website
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
