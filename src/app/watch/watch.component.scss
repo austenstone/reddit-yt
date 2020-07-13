@@ -34,7 +34,7 @@ mat-drawer {
 
   mat-form-field {
     margin-top: 10px;
-    width: 100%;
+    width: 90%;
   }
 }
 
@@ -93,4 +93,9 @@ mat-drawer {
 
 .toolbar-bottom {
   order: 2;
+}
+
+.subreddit-icon {
+  max-width: 20px;
+  max-height: 20px;
 }

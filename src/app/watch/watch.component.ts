@@ -1,13 +1,13 @@
 import { Component, OnInit, ViewChild, HostListener } from '@angular/core';
 import { RedditService } from '../reddit.service';
-import { ChildData, Reddit } from '../reddit.types';
+import { ChildData } from '../reddit.types';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { YouTubePlayer } from '@angular/youtube-player';
-import { Observable, from, of } from 'rxjs';
-import { map, switchMap, filter, repeat, expand, takeUntil, takeWhile, take, startWith, tap, throttleTime, finalize } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map, expand, takeWhile, tap, finalize } from 'rxjs/operators';
 import { MatSelectChange } from '@angular/material/select';
 import { StorageService } from '../storage.service';
-import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
+import { MatMenuTrigger } from '@angular/material/menu';
 import { BreakpointObserver } from '@angular/cdk/layout';
 
 export interface RedditVideo extends ChildData, RedditVideoStorage {
@@ -18,6 +18,11 @@ export interface RedditVideoStorage {
   youtubeId: string;
   watched?: boolean;
   finished?: boolean;
+}
+
+export interface RedditSubreddit {
+  name: string;
+  img?: string;
 }
 
 @Component({
@@ -40,11 +45,12 @@ export class WatchComponent implements OnInit {
     });
   }
   currentVideo: RedditVideo;
-  currentSubreddit = 'videos';
+  currentSubreddit: RedditSubreddit;
   customSubreddit = false;
-  subreddits: string[] = ['videos', 'music', 'listen', 'volkswagen', 'audi', 'funny'];
+  subreddits: RedditSubreddit[] = [{ name: 'videos' }, { name: 'all' }, { name: 'music' }, { name: 'ted' }, { name: 'sports' }];
   videos: RedditVideo[] = [];
   storedVideos: RedditVideoStorage[];
+  listingType = 'hot';
   @ViewChild(YouTubePlayer) youtubePlayer: YouTubePlayer;
   toolbarBottom = false;
   isMobile;
@@ -82,17 +88,43 @@ export class WatchComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.currentSubreddit = this.subreddits[0];
     this.initYouTube();
     this.storedVideos = this.storageService.getVideos();
-    this.changeSubreddit('videos').subscribe();
+    this.changeSubreddit(this.currentSubreddit?.name).subscribe((video) => {
+      const found = this.videos.find((v) => !v.watched);
+      this.selectVideo(found?.youtubeId || this.videos[0].youtubeId);
+    });
+    this.redditService.getTrendingSubreddits().subscribe((subreddits) => {
+      console.log('trending subreddits', subreddits);
+    });
+
+    this.redditService.getPopularSubreddits().subscribe((subreddits) => {
+      console.log('popular subreddits', subreddits);
+      subreddits.data.children.forEach((s) => {
+        this.subreddits.push({
+          name: s.data.display_name,
+          img: s.data.icon_img || s.data.header_img
+        });
+      });
+    });
+
+
+    this.subreddits.forEach((subreddit) => {
+      this.redditService.getSubredditInfo(subreddit.name).subscribe((r) => {
+        const foundSubreddit = this.subreddits.find((s) => s.name === subreddit.name);
+        foundSubreddit.img = r.data.icon_img || r.data.header_img;
+      });
+    });
+
   }
 
   getVideos(subreddit: string, after?: string): Observable<RedditVideo[]> {
-    const video = [];
-    return this.redditService.getHot(subreddit, after).pipe(
+    return this.redditService.getRedditListing(subreddit, this.listingType, after).pipe(
       map((hotVids) => {
         const videos: RedditVideo[] = [];
         hotVids.data.children.forEach((child) => {
+          console.log(child.data.title, child);
           if (child.data.is_video || child.data.media) {
             const youtubeId = youtube_parser(child.data.url);
             if (youtubeId) {
@@ -108,7 +140,7 @@ export class WatchComponent implements OnInit {
   loadMore(): void {
     const lastVideo = this.videos[this.videos.length - 1];
     if (lastVideo) {
-      this.getVideos(this.currentSubreddit, lastVideo.name).subscribe((videos) => this.videos = this.videos.concat(videos));
+      this.getVideos(this.currentSubreddit.name, lastVideo.name).subscribe((videos) => this.videos = this.videos.concat(videos));
     }
   }
 
@@ -141,19 +173,21 @@ export class WatchComponent implements OnInit {
   changeSubreddit(subreddit: string): Observable<RedditVideo[]> {
     let attempts = 0;
     const lastVideoName = this.videos[this.videos.length - 1]?.name;
+    const foundSubreddit = this.subreddits.find((s) => s.name === subreddit);
     return this.getVideos(subreddit).pipe(
-      expand((v) => this.getVideos(subreddit, lastVideoName)),
+      expand(() => this.getVideos(subreddit, lastVideoName)),
       tap(() => attempts++),
-      takeWhile(() => this.videos.length < 30 && attempts < 10)
+      takeWhile((v) => v.length > 0 && this.videos.length < 30 && attempts < 10)
     ).pipe(
       tap((videos) => this.videos = this.videos.concat(videos)),
       finalize(() => {
+        if (this.videos.length < 1) {
+          this.openSnackBar(`No ${this.listingType} videos for r/${subreddit} ❌`);
+        }
         this.videos.forEach((video) => {
           const foundStored = this.storedVideos.find((v) => v.youtubeId === video.youtubeId);
           Object.assign(video, foundStored);
         });
-        const found = this.videos.find((v) => !v.watched);
-        this.selectVideo(found?.youtubeId || this.videos[0].youtubeId);
       })
     );
   }
@@ -170,10 +204,16 @@ export class WatchComponent implements OnInit {
     e.preventDefault();
   }
 
+  onListingTypeChange(event: MatSelectChange): void {
+    this.videos = [];
+    console.log(event.value, this.listingType);
+    this.changeSubreddit(this.currentSubreddit.name).subscribe();
+  }
+
   onSubredditChange(event: MatSelectChange): void {
     this.videos = [];
     this.currentSubreddit = event.value;
-    this.changeSubreddit(this.currentSubreddit).subscribe();
+    this.changeSubreddit(this.currentSubreddit.name).subscribe();
   }
 
   onPlayerReady(event: YT.PlayerEvent): void {

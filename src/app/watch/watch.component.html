@@ -51,20 +51,57 @@
   <mat-drawer #drawer mode="side" [opened]="this.isMobile">
     <div class="drawer-container">
       <mat-form-field>
-        <span matPrefix>/r/</span>
         <mat-label>Subreddit</mat-label>
         <mat-select [(value)]="currentSubreddit" (selectionChange)="onSubredditChange($event)">
-          <mat-option *ngFor="let subreddit of subreddits" [value]="subreddit">{{subreddit}}</mat-option>
+          <mat-select-trigger>
+            <img class="subreddit-icon" [src]="currentSubreddit?.img">
+            {{currentSubreddit?.name | titlecase}}
+          </mat-select-trigger>
+          <mat-option *ngFor="let subreddit of subreddits" [value]="subreddit">
+            <img class="subreddit-icon" [src]="subreddit.img">
+            {{subreddit.name | titlecase}}
+          </mat-option>
           <mat-option (click)="setCustomSubreddit($event)">Custom</mat-option>
-          <mat-option [value]="currentSubreddit">{{currentSubreddit}}</mat-option>
         </mat-select>
       </mat-form-field>
-
       <mat-form-field *ngIf="customSubreddit">
         <span matPrefix>/r/</span>
         <mat-label>Subreddit</mat-label>
         <input matInput placeholder="videos" [(value)]="currentSubreddit">
         <mat-icon (click)="changeSubreddit(currentSubreddit)">delete</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Listing Type</mat-label>
+        <mat-select [(value)]="listingType" (selectionChange)="onListingTypeChange($event)">
+          <mat-select-trigger>
+            {{listingType | titlecase}}
+          </mat-select-trigger>
+          <mat-option value="hot">
+            <mat-icon matListIcon>whatshot</mat-icon>
+            Hot
+          </mat-option>
+          <mat-option value="new">
+            <mat-icon matListIcon>child_care</mat-icon>
+            New
+          </mat-option>
+          <mat-option value="best">
+            <mat-icon matListIcon>star</mat-icon>
+            Best
+          </mat-option>
+          <mat-option value="rising">
+            <mat-icon matListIcon>trending_up</mat-icon>
+            Rising
+          </mat-option>
+          <mat-option value="controversial">
+            <mat-icon matListIcon>star</mat-icon>
+            Controversial
+          </mat-option>
+          <mat-option value="random">
+            <mat-icon matListIcon>translate</mat-icon>
+            Random
+          </mat-option>
+        </mat-select>
       </mat-form-field>
 
       <mat-grid-list cols="1" rowHeight="2:1">
