@@ -46,7 +46,7 @@ $candy-app-theme: mat-dark-theme(
 
 @mixin dark-scroll-bar {
   ::-webkit-scrollbar {
-    width: 5px;
+    width: 0;
   }
 
   ::-webkit-scrollbar-track {
