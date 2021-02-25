@@ -60,3 +60,12 @@ $candy-app-theme: mat-dark-theme(
 body {
   @include dark-scroll-bar;
 }
+
+.mat-tooltip-trigger {
+  touch-action: auto !important;
+}
+
+a {
+  color: mat-color($candy-app-primary, 500);
+  text-decoration: none;
+}

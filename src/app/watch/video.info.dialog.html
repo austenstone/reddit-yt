@@ -1,0 +1,14 @@
+<h1 mat-dialog-title>{{video?.title}}</h1>
+<div mat-dialog-content>
+  <div class="awards-container">
+    <img width="50px" *ngFor="let award of video.all_awardings" [src]="award.icon_url" [matTooltip]="award.description"/>
+  </div>
+  <p>Submitted {{video?.created | date}} by <a target="_blank" [href]="'https://reddit.com/user/' + video?.author">{{video?.author}}</a></p>
+  <p>{{video?.selftext}}</p>
+  <p [innerHTML]="video.selftext"></p>
+  <!-- {{video | json}} -->
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">Close</button>
+  <a mat-button target="_blank" [href]="'https://reddit.com/' + video.permalink">View on Reddit</a>
+</div>

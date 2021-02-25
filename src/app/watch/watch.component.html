@@ -1,10 +1,10 @@
-<mat-toolbar [class.toolbar-bottom]="toolbarBottom">
-  <button *ngIf="isMobile" mat-icon-button (click)="drawer.toggle()">
+<mat-toolbar [class.toolbar-bottom]="toolbarBottom" *ngIf="youtubePlayer">
+  <button *ngIf="!isMobile" mat-icon-button (click)="drawer.toggle()">
     <mat-icon>menu</mat-icon>
   </button>
   <div class="banner" (click)="drawer.toggle()">
     <img src="assets/img/reddit-yt-logo-circle.png">
-    <span *ngIf="isMobile">Reddit TV</span>
+    <span *ngIf="!isMobile">Reddit TV</span>
   </div>
   <span class="spacer"></span>
   <button mat-icon-button>
@@ -29,15 +29,18 @@
     <mat-icon>volume_up</mat-icon>
   </button>
   <mat-menu #volumeMenu="matMenu">
-    <mat-slider vertical [value]="youtubePlayer?.getVolume()" (input)="youtubePlayer.setVolume($event.value)">
+    <mat-slider vertical [value]="youtubePlayer.getVolume()" (input)="youtubePlayer.setVolume($event.value)">
     </mat-slider>
   </mat-menu>
-  <button mat-icon-button (click)="toolbarBottom = !toolbarBottom">
-    <mat-icon>{{toolbarBottom ? 'expand_less' : 'expand_more'}}</mat-icon>
+  <button mat-icon-button (click)="openVideoInfo()">
+    <mat-icon>info</mat-icon>
   </button>
   <button mat-icon-button (contextmenu)="saveMenuClick.openMenu()" [matMenuTriggerFor]="saveMenu"
     #saveMenuClick="matMenuTrigger">
     <mat-icon>save</mat-icon>
+  </button>
+  <button mat-icon-button (click)="toolbarBottom = !toolbarBottom">
+    <mat-icon>{{toolbarBottom ? 'expand_less' : 'expand_more'}}</mat-icon>
   </button>
   <mat-menu #saveMenu="matMenu">
     <button mat-menu-item (click)="clearWatchHistory()">
@@ -48,7 +51,7 @@
 </mat-toolbar>
 
 <mat-drawer-container class="example-container" autosize>
-  <mat-drawer #drawer mode="side" [opened]="this.isMobile">
+  <mat-drawer #drawer mode="side" [opened]="isMobile">
     <div class="drawer-container">
       <mat-form-field>
         <mat-label>Subreddit</mat-label>

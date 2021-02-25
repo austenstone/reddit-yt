@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, HostListener } from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener, Inject } from '@angular/core';
 import { RedditService } from '../reddit.service';
 import { ChildData } from '../reddit.types';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -9,6 +9,8 @@ import { MatSelectChange } from '@angular/material/select';
 import { StorageService } from '../storage.service';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { BreakpointObserver } from '@angular/cdk/layout';
+import { MatDrawer } from '@angular/material/sidenav';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 export interface RedditVideo extends ChildData, RedditVideoStorage {
   playing?: boolean;
@@ -31,19 +33,10 @@ export interface RedditSubreddit {
   styleUrls: ['./watch.component.scss']
 })
 export class WatchComponent implements OnInit {
-
-  constructor(
-    private redditService: RedditService,
-    private snackBar: MatSnackBar,
-    private storageService: StorageService,
-    private breakpointObserver: BreakpointObserver
-  ) {
-    this.breakpointObserver.isMatched('(max-width: 800px)');
-    this.breakpointObserver.observe(['(max-width: 800px)']).subscribe((result) => {
-      this.isMobile = !result.matches;
-      this.toolbarBottom = result.matches;
-    });
-  }
+  @ViewChild(YouTubePlayer) youtubePlayer: YouTubePlayer;
+  @ViewChild('contextMenuClick') contextMenu: MatMenuTrigger;
+  @ViewChild('saveMenuClick') saveMenu: MatMenuTrigger;
+  @ViewChild('drawer') drawer: MatDrawer;
   currentVideo: RedditVideo;
   currentSubreddit: RedditSubreddit;
   customSubreddit = false;
@@ -51,14 +44,24 @@ export class WatchComponent implements OnInit {
   videos: RedditVideo[] = [];
   storedVideos: RedditVideoStorage[];
   listingType = 'hot';
-  @ViewChild(YouTubePlayer) youtubePlayer: YouTubePlayer;
   toolbarBottom = false;
   isMobile;
-  @ViewChild('contextMenuClick') contextMenu: MatMenuTrigger;
-  @ViewChild('saveMenuClick') saveMenu: MatMenuTrigger;
-
-
   contextMenuPosition = { x: '0px', y: '0px' };
+
+  constructor(
+    private redditService: RedditService,
+    private snackBar: MatSnackBar,
+    private storageService: StorageService,
+    private breakpointObserver: BreakpointObserver,
+    public dialog: MatDialog
+  ) {
+    this.isMobile = this.breakpointObserver.isMatched('(max-width: 800px)');
+    this.breakpointObserver.observe(['(max-width: 800px)']).subscribe((result) => {
+      this.isMobile = result.matches;
+      this.toolbarBottom = result.matches;
+    });
+  }
+
   @HostListener('window:keydown', ['$event']) onKeydownEvent(event: KeyboardEvent): void {
     switch (event.key) {
       case ' ':
@@ -88,13 +91,19 @@ export class WatchComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.currentSubreddit = this.subreddits[0];
+    this.currentSubreddit = this.subreddits.find((sr) => sr);
     this.initYouTube();
     this.storedVideos = this.storageService.getVideos();
     this.changeSubreddit(this.currentSubreddit?.name).subscribe((video) => {
-      const found = this.videos.find((v) => !v.watched);
+      console.log(video);
+      const found = video.find((v) => {
+        console.log(v.watched);
+        return v.watched === undefined || v.watched == false;
+      });
+      console.log(video, video.find((v) => v.watched === false));
       this.selectVideo(found?.youtubeId || this.videos[0].youtubeId);
     });
+
     this.redditService.getTrendingSubreddits().subscribe((subreddits) => {
       console.log('trending subreddits', subreddits);
     });
@@ -108,7 +117,6 @@ export class WatchComponent implements OnInit {
         });
       });
     });
-
 
     this.subreddits.forEach((subreddit) => {
       this.redditService.getSubredditInfo(subreddit.name).subscribe((r) => {
@@ -124,7 +132,6 @@ export class WatchComponent implements OnInit {
       map((hotVids) => {
         const videos: RedditVideo[] = [];
         hotVids.data.children.forEach((child) => {
-          console.log(child.data.title, child);
           if (child.data.is_video || child.data.media) {
             const youtubeId = youtube_parser(child.data.url);
             if (youtubeId) {
@@ -140,11 +147,14 @@ export class WatchComponent implements OnInit {
   loadMore(): void {
     const lastVideo = this.videos[this.videos.length - 1];
     if (lastVideo) {
-      this.getVideos(this.currentSubreddit.name, lastVideo.name).subscribe((videos) => this.videos = this.videos.concat(videos));
+      this.getVideos(this.currentSubreddit.name, lastVideo.name).subscribe((videos) => {
+        this.videos = this.videos.concat(videos)
+      });
     }
   }
 
   selectVideo(id: string): void {
+    console.warn('select', id)
     const foundVideo = this.videos.find((vid) => vid.youtubeId === id);
     if (foundVideo) {
       if (this.currentVideo) {
@@ -158,6 +168,7 @@ export class WatchComponent implements OnInit {
       this.youtubePlayer.playVideo();
       this.currentVideo.playing = true;
       this.currentVideo.watched = true;
+
       this.storageService.storeVideos(this.videos.map((v) => {
         return {
           youtubeId: v.youtubeId,
@@ -168,9 +179,14 @@ export class WatchComponent implements OnInit {
     } else {
       this.openSnackBar(`Failed to selected video ${id}`);
     }
+
+    if (this.isMobile) {
+      this.drawer.close();
+    }
   }
 
   changeSubreddit(subreddit: string): Observable<RedditVideo[]> {
+    console.log('called', subreddit);
     let attempts = 0;
     const lastVideoName = this.videos[this.videos.length - 1]?.name;
     const foundSubreddit = this.subreddits.find((s) => s.name === subreddit);
@@ -319,6 +335,33 @@ export class WatchComponent implements OnInit {
     this.contextMenu.menuData = { item };
     this.contextMenu._openedBy = 'mouse';
     this.contextMenu.openMenu();
+  }
+
+  openVideoInfo(): void {
+    const dialogRef = this.dialog.open(VideoInfoDialog, {
+      width: '350px',
+      data: { video: this.currentVideo }
+    });
+  }
+
+}
+
+@Component({
+  selector: 'video-info-dialog',
+  templateUrl: 'video.info.dialog.html',
+  styleUrls: ['./video.info.dialog.scss']
+})
+export class VideoInfoDialog {
+  video: RedditVideo;
+
+  constructor(
+    public dialogRef: MatDialogRef<VideoInfoDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: { video: RedditVideo }) {
+      this.video = this.data.video;
+    }
+
+  onNoClick(): void {
+    this.dialogRef.close();
   }
 
 }

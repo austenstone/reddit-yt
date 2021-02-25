@@ -79,9 +79,9 @@ mat-drawer {
   background: transparent;
 }
 
-// .watched.video-thumbnail:before {
-//   background: rgba(0, 0, 0, 0.66);
-// }
+.watched.video-thumbnail:before {
+  background: rgba(0, 0, 0, 0.80);
+}
 
 .playing.video-thumbnail:before {
   background: transparent;
