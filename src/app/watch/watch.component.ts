@@ -347,7 +347,7 @@ export class WatchComponent implements OnInit {
 }
 
 @Component({
-  selector: 'video-info-dialog',
+  selector: 'app-video-info-dialog',
   templateUrl: 'video.info.dialog.html',
   styleUrls: ['./video.info.dialog.scss']
 })
