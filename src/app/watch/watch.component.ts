@@ -98,7 +98,7 @@ export class WatchComponent implements OnInit {
       console.log(video);
       const found = video.find((v) => {
         console.log(v.watched);
-        return v.watched === undefined || v.watched == false;
+        return v.watched === undefined || v.watched === false;
       });
       console.log(video, video.find((v) => v.watched === false));
       this.selectVideo(found?.youtubeId || this.videos[0].youtubeId);
@@ -148,13 +148,13 @@ export class WatchComponent implements OnInit {
     const lastVideo = this.videos[this.videos.length - 1];
     if (lastVideo) {
       this.getVideos(this.currentSubreddit.name, lastVideo.name).subscribe((videos) => {
-        this.videos = this.videos.concat(videos)
+        this.videos = this.videos.concat(videos);
       });
     }
   }
 
   selectVideo(id: string): void {
-    console.warn('select', id)
+    console.warn('select', id);
     const foundVideo = this.videos.find((vid) => vid.youtubeId === id);
     if (foundVideo) {
       if (this.currentVideo) {
