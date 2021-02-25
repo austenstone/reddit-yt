@@ -338,7 +338,7 @@ export class WatchComponent implements OnInit {
   }
 
   openVideoInfo(): void {
-    const dialogRef = this.dialog.open(VideoInfoDialog, {
+    const dialogRef = this.dialog.open(VideoInfoDialogComponent, {
       width: '350px',
       data: { video: this.currentVideo }
     });
@@ -351,11 +351,11 @@ export class WatchComponent implements OnInit {
   templateUrl: 'video.info.dialog.html',
   styleUrls: ['./video.info.dialog.scss']
 })
-export class VideoInfoDialog {
+export class VideoInfoDialogComponent {
   video: RedditVideo;
 
   constructor(
-    public dialogRef: MatDialogRef<VideoInfoDialog>,
+    public dialogRef: MatDialogRef<VideoInfoDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { video: RedditVideo }) {
       this.video = this.data.video;
     }
