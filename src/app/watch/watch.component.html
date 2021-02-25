@@ -104,16 +104,17 @@
         </mat-select>
       </mat-form-field>
 
-      <mat-grid-list cols="1" rowHeight="2:1">
-        <mat-grid-tile class="video-thumbnail" *ngFor="let video of videos" [class.playing]="video.playing"
+      <div class="video-list">
+        <div class="video-thumbnail" *ngFor="let video of videos" [class.playing]="video.playing"
           [class.watched]="video.watched" [style.backgroundImage]="'url(' + video.media.oembed.thumbnail_url + ')'"
-          [matTooltip]="video.title" (click)="selectVideo(video.youtubeId)">
+          style="background-size: cover;" [matTooltip]="video.title" (click)="selectVideo(video.youtubeId)">
           <mat-icon>
             {{video.playing ? 'play_arrow' : (video.finished) ? 'done_all' : (video.watched) ? 'visibility' : ''}}
           </mat-icon>
+        </div>
+        <mat-divider style="padding: 1px;"></mat-divider>
+      </div>
 
-        </mat-grid-tile>
-      </mat-grid-list>
       <button mat-button (click)="loadMore()">Load More</button>
     </div>
   </mat-drawer>

@@ -18,7 +18,7 @@ mat-drawer-container {
 }
 
 mat-drawer {
-  width: 225px;
+  // width: 225px;
   background: #181818;
 
   .drawer-container {
@@ -46,10 +46,22 @@ mat-drawer {
   height: 0;
 }
 
+.video-list {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
 .video-thumbnail {
+  position: relative;
   background-size: cover;
   background-position: center;
   cursor: pointer;
+  min-width: 240px;
+  min-height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .video-thumbnail:before {
