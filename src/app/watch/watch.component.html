@@ -50,8 +50,8 @@
   </mat-menu>
 </mat-toolbar>
 
-<mat-drawer-container class="example-container" autosize>
-  <mat-drawer #drawer mode="side" [opened]="isMobile">
+<mat-drawer-container class="example-container" [hasBackdrop]="isMobile" autosize>
+  <mat-drawer #drawer mode="side" [opened]="!isMobile">
     <div class="drawer-container">
       <mat-form-field>
         <mat-label>Subreddit</mat-label>
