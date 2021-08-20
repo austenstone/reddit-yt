@@ -10,7 +10,6 @@ export class StorageService {
   constructor() { }
 
   storeVideos(videos: RedditVideoStorage[]): void {
-    console.log('storing videos', videos);
     try {
       window.localStorage[StorageService.lastUsedNodeKey] = JSON.stringify(videos);
     } catch { }

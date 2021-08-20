@@ -40,6 +40,7 @@ export class WatchComponent implements OnInit {
   currentVideo: RedditVideo;
   currentSubreddit: RedditSubreddit;
   customSubreddit = false;
+  customSubredditName = '';
   subreddits: RedditSubreddit[] = [{ name: 'videos' }, { name: 'all' }, { name: 'music' }, { name: 'ted' }, { name: 'sports' }];
   videos: RedditVideo[] = [];
   storedVideos: RedditVideoStorage[];
@@ -47,6 +48,7 @@ export class WatchComponent implements OnInit {
   toolbarBottom = false;
   isMobile;
   contextMenuPosition = { x: '0px', y: '0px' };
+  dialogRef: MatDialogRef<VideoInfoDialogComponent>;
 
   constructor(
     private redditService: RedditService,
@@ -87,6 +89,9 @@ export class WatchComponent implements OnInit {
           this.youtubePlayer.seekTo(this.youtubePlayer.getCurrentTime() + 15, true);
         }
         break;
+      case 'i':
+        this.openVideoInfo();
+        break;
     }
   }
 
@@ -94,22 +99,17 @@ export class WatchComponent implements OnInit {
     this.currentSubreddit = this.subreddits.find((sr) => sr);
     this.initYouTube();
     this.storedVideos = this.storageService.getVideos();
-    this.changeSubreddit(this.currentSubreddit?.name).subscribe((video) => {
-      console.log(video);
+    this.changeSubreddit(this.currentSubreddit?.name)?.subscribe((video) => {
       const found = video.find((v) => {
-        console.log(v.watched);
         return v.watched === undefined || v.watched === false;
       });
-      console.log(video, video.find((v) => v.watched === false));
       this.selectVideo(found?.youtubeId || this.videos[0].youtubeId);
     });
 
-    this.redditService.getTrendingSubreddits().subscribe((subreddits) => {
-      console.log('trending subreddits', subreddits);
-    });
+    // this.redditService.getTrendingSubreddits().subscribe((subreddits) => {
+    // });
 
     this.redditService.getPopularSubreddits().subscribe((subreddits) => {
-      console.log('popular subreddits', subreddits);
       subreddits.data.children.forEach((s) => {
         this.subreddits.push({
           name: s.data.display_name,
@@ -145,11 +145,13 @@ export class WatchComponent implements OnInit {
   }
 
   loadMore(): void {
-    const lastVideo = this.videos[this.videos.length - 1];
-    if (lastVideo) {
-      this.getVideos(this.currentSubreddit.name, lastVideo.name).subscribe((videos) => {
-        this.videos = this.videos.concat(videos);
-      });
+    if (this.videos) {
+      const lastVideo = this.videos[this.videos?.length - 1];
+      if (lastVideo) {
+        this.getVideos(this.currentSubreddit.name, lastVideo.name).subscribe((videos) => {
+          this.videos = this.videos ? this.videos.concat(videos) : videos
+        });
+      }
     }
   }
 
@@ -186,21 +188,23 @@ export class WatchComponent implements OnInit {
   }
 
   changeSubreddit(subreddit: string): Observable<RedditVideo[]> {
-    console.log('called', subreddit);
     let attempts = 0;
-    const lastVideoName = this.videos[this.videos.length - 1]?.name;
+    let lastVideoName;
+    if (this.videos) {
+      lastVideoName = this.videos[this.videos.length - 1]?.name;
+    }
     const foundSubreddit = this.subreddits.find((s) => s.name === subreddit);
     return this.getVideos(subreddit).pipe(
       expand(() => this.getVideos(subreddit, lastVideoName)),
       tap(() => attempts++),
-      takeWhile((v) => v.length > 0 && this.videos.length < 30 && attempts < 10)
+      takeWhile((v) => v.length > 0 && this.videos?.length < 30 && attempts < 10)
     ).pipe(
-      tap((videos) => this.videos = this.videos.concat(videos)),
+      tap((videos) => this.videos = this.videos ? this.videos.concat(videos) : videos),
       finalize(() => {
-        if (this.videos.length < 1) {
+        if (this.videos?.length < 1) {
           this.openSnackBar(`No ${this.listingType} videos for r/${subreddit} ❌`);
         }
-        this.videos.forEach((video) => {
+        this.videos?.forEach((video) => {
           const foundStored = this.storedVideos.find((v) => v.youtubeId === video.youtubeId);
           Object.assign(video, foundStored);
         });
@@ -217,19 +221,37 @@ export class WatchComponent implements OnInit {
 
   setCustomSubreddit(e): void {
     this.customSubreddit = true;
+    this.currentSubreddit = {
+      name: 'custom',
+      img: null
+    }
     e.preventDefault();
   }
 
   onListingTypeChange(event: MatSelectChange): void {
     this.videos = [];
-    console.log(event.value, this.listingType);
-    this.changeSubreddit(this.currentSubreddit.name).subscribe();
+    if (this.currentSubreddit.name) {
+      this.changeSubreddit(this.currentSubreddit.name).subscribe();
+    } else {
+      this.snackBar.open('No subreddit name.');
+    }
   }
 
-  onSubredditChange(event: MatSelectChange): void {
-    this.videos = [];
-    this.currentSubreddit = event.value;
-    this.changeSubreddit(this.currentSubreddit.name).subscribe();
+  onCustomSubredditChange(subreddit: RedditSubreddit): void {
+    if (subreddit) {
+      this.videos = [];
+      this.currentSubreddit = subreddit;
+      this.changeSubreddit(this.currentSubreddit.name).subscribe();
+    }
+  }
+
+  onSubredditChange(subreddit: RedditSubreddit): void {
+    if (subreddit) {
+      this.videos = [];
+      this.currentSubreddit = subreddit;
+      this.changeSubreddit(this.currentSubreddit.name).subscribe();
+    }
+    this.customSubreddit = this.currentSubreddit.name === 'custom';
   }
 
   onPlayerReady(event: YT.PlayerEvent): void {
@@ -338,10 +360,13 @@ export class WatchComponent implements OnInit {
   }
 
   openVideoInfo(): void {
-    const dialogRef = this.dialog.open(VideoInfoDialogComponent, {
-      width: '350px',
-      data: { video: this.currentVideo }
-    });
+    if (!this.dialogRef) {
+      this.dialogRef = this.dialog.open(VideoInfoDialogComponent, {
+        width: '350px',
+        data: { video: this.currentVideo }
+      });
+      this.dialogRef.afterClosed().subscribe(() => this.dialogRef = null);
+    }
   }
 
 }
@@ -357,8 +382,8 @@ export class VideoInfoDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<VideoInfoDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { video: RedditVideo }) {
-      this.video = this.data.video;
-    }
+    this.video = this.data.video;
+  }
 
   onNoClick(): void {
     this.dialogRef.close();

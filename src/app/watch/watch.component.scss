@@ -92,9 +92,10 @@ mat-drawer {
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 
   img {
-    height: 30px;
+    height: 40px;
     margin-right: 5px;
   }
 
