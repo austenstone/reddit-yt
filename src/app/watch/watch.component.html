@@ -10,19 +10,22 @@
   <button mat-icon-button (click)="playPreviousVideo()" matTooltip="Previous (Shift + ←)">
     <mat-icon>skip_previous</mat-icon>
   </button>
-  <button mat-icon-button (click)="youtubePlayer.seekTo(youtubePlayer.getCurrentTime() - 15, true)" matTooltip="Rewind (←)">
+  <button mat-icon-button (click)="youtubePlayer.seekTo(youtubePlayer.getCurrentTime() - 15, true)"
+    matTooltip="Rewind (←)">
     <mat-icon>fast_rewind</mat-icon>
   </button>
-  <button mat-icon-button (click)="currentVideo?.playing ? pauseVideo() : playVideo()"  [matTooltip]="currentVideo?.playing ? 'Pause (Space)' : 'Play (Space)'">
+  <button mat-icon-button (click)="currentVideo?.playing ? pauseVideo() : playVideo()"
+    [matTooltip]="currentVideo?.playing ? 'Pause (Space)' : 'Play (Space)'">
     <mat-icon>{{currentVideo?.playing ? 'pause' : 'play_arrow'}}</mat-icon>
   </button>
-  <button mat-icon-button (click)="youtubePlayer.seekTo(youtubePlayer.getCurrentTime() + 15, true)" matTooltip="Fast Forward (→)">
+  <button mat-icon-button (click)="youtubePlayer.seekTo(youtubePlayer.getCurrentTime() + 15, true)"
+    matTooltip="Fast Forward (→)">
     <mat-icon>fast_forward</mat-icon>
   </button>
-  <button mat-icon-button (click)="playNextVideo()"  matTooltip="Next (Shift + →)">
+  <button mat-icon-button (click)="playNextVideo()" matTooltip="Next (Shift + →)">
     <mat-icon>skip_next</mat-icon>
   </button>
-  <button mat-icon-button (click)="youtubePlayer.seekTo(0, true)" matTooltip="Replay">
+  <button mat-icon-button (click)="youtubePlayer.seekTo(0, true)" matTooltip="Replay (R)">
     <mat-icon>replay</mat-icon>
   </button>
   <button mat-icon-button [matMenuTriggerFor]="volumeMenu" matTooltip="Volume (↓ / ↑)">
@@ -32,14 +35,15 @@
     <mat-slider vertical [value]="youtubePlayer.getVolume()" (input)="youtubePlayer.setVolume($event.value)">
     </mat-slider>
   </mat-menu>
-  <button mat-icon-button (click)="openVideoInfo()" matTooltip="Video Info">
+  <button mat-icon-button (click)="openVideoInfo()" matTooltip="Video Info (I)">
     <mat-icon>info</mat-icon>
   </button>
   <button mat-icon-button (contextmenu)="saveMenuClick.openMenu()" [matMenuTriggerFor]="saveMenu"
     #saveMenuClick="matMenuTrigger" matTooltip="History Options">
     <mat-icon>save</mat-icon>
   </button>
-  <button mat-icon-button (click)="toolbarBottom = !toolbarBottom" [matTooltip]="toolbarBottom ? 'Toolbar to top' : 'Toolbar to bottom'">
+  <button mat-icon-button (click)="toolbarBottom = !toolbarBottom"
+    [matTooltip]="toolbarBottom ? 'Toolbar to top' : 'Toolbar to bottom'">
     <mat-icon>{{toolbarBottom ? 'expand_less' : 'expand_more'}}</mat-icon>
   </button>
   <mat-menu #saveMenu="matMenu">
@@ -64,13 +68,14 @@
             <img class="subreddit-icon" [src]="subreddit.img">
             {{subreddit.name | titlecase}}
           </mat-option>
-          <mat-option  [value]="{ name: customSubredditName }" (click)="setCustomSubreddit($event)">Custom</mat-option>
+          <mat-option [value]="{ name: customSubredditName }" (click)="setCustomSubreddit($event)">Custom</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field *ngIf="customSubreddit">
         <span matPrefix>/r/</span>
         <mat-label>Subreddit</mat-label>
-        <input matInput placeholder="videos" [(value)]="customSubredditName" (input)="onCustomSubredditChange({ name: $event.target.value})">
+        <input matInput placeholder="videos" [(value)]="customSubredditName"
+          (input)="onCustomSubredditChange({ name: $event.target.value})">
       </mat-form-field>
 
       <mat-form-field>
@@ -108,20 +113,20 @@
 
       <ng-container *ngIf="videos">
 
-      <div class="video-list">
-        <div class="video-thumbnail" *ngFor="let video of videos" [class.playing]="video.playing"
-          [class.watched]="video.watched" [style.backgroundImage]="'url(' + video.media.oembed.thumbnail_url + ')'"
-          style="background-size: cover;" [matTooltip]="video.title" (click)="selectVideo(video.youtubeId)">
-          <mat-icon>
-            {{video.playing ? 'play_arrow' : (video.finished) ? 'done_all' : (video.watched) ? 'visibility' : ''}}
-          </mat-icon>
+        <div class="video-list">
+          <div class="video-thumbnail" *ngFor="let video of videos" [class.playing]="video.playing"
+            [class.watched]="video.watched" [style.backgroundImage]="'url(' + video.media.oembed.thumbnail_url + ')'"
+            style="background-size: cover;" [matTooltip]="video.title" (click)="selectVideo(video.youtubeId)">
+            <mat-icon>
+              {{video.playing ? 'play_arrow' : (video.finished) ? 'done_all' : (video.watched) ? 'visibility' : ''}}
+            </mat-icon>
+          </div>
+          <mat-divider style="padding: 1px;"></mat-divider>
         </div>
-        <mat-divider style="padding: 1px;"></mat-divider>
-      </div>
 
-      <p *ngIf="videos.length == 0">No videos for this subreddit.</p>
-      <button *ngIf="videos.length > 0" mat-button (click)="loadMore()">Load More</button>
-    </ng-container>
+        <p *ngIf="videos.length == 0">No videos for this subreddit.</p>
+        <button *ngIf="videos.length > 0" mat-button (click)="loadMore()">Load More</button>
+      </ng-container>
     </div>
   </mat-drawer>
 

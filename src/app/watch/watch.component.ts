@@ -49,6 +49,7 @@ export class WatchComponent implements OnInit {
   isMobile;
   contextMenuPosition = { x: '0px', y: '0px' };
   dialogRef: MatDialogRef<VideoInfoDialogComponent>;
+  iframe: any;
 
   constructor(
     private redditService: RedditService,
@@ -89,8 +90,18 @@ export class WatchComponent implements OnInit {
           this.youtubePlayer.seekTo(this.youtubePlayer.getCurrentTime() + 15, true);
         }
         break;
+      case 'r':
+        this.youtubePlayer.seekTo(0, true);
+        break;
+      case 'f':
+        this.playFullscreen();
+        break;
       case 'i':
-        this.openVideoInfo();
+        if (!this.dialogRef) {
+          this.openVideoInfo();
+        } else {
+          this.dialogRef.close();
+        }
         break;
     }
   }
@@ -256,6 +267,7 @@ export class WatchComponent implements OnInit {
 
   onPlayerReady(event: YT.PlayerEvent): void {
     event.target.playVideo();
+    this.iframe = event.target;
   }
 
   onPlayerStateChange(event: YT.OnStateChangeEvent): void {
@@ -369,6 +381,14 @@ export class WatchComponent implements OnInit {
     }
   }
 
+  playFullscreen() {
+    this.youtubePlayer.playVideo();//won't work on mobile
+    console.log('iframe', this.iframe);
+    var requestFullScreen = this.iframe.h.requestFullScreen || this.iframe.h.mozRequestFullScreen || this.iframe.h.webkitRequestFullScreen;
+    if (requestFullScreen) {
+      requestFullScreen.bind(this.iframe.h)();
+    }
+  }
 }
 
 @Component({
