@@ -14,23 +14,22 @@ import { CommonModule } from '@angular/common';
 import { UpdateService } from './update.service';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    WatchComponent,
-    VideoInfoDialogComponent
-  ],
-  imports: [
-    BrowserModule,
-    CommonModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    YouTubePlayerModule,
-    HttpClientModule,
-    DemoMaterialModule,
-    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
-  ],
-  entryComponents: [VideoInfoDialogComponent],
-  providers: [],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        WatchComponent,
+        VideoInfoDialogComponent
+    ],
+    imports: [
+        BrowserModule,
+        CommonModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        YouTubePlayerModule,
+        HttpClientModule,
+        DemoMaterialModule,
+        ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
+    ],
+    providers: [],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }
