@@ -32,12 +32,13 @@ jobs:
         run: npm run build-ghpages
         
       - name: Check GitHub Pages Status 👀
+        if: github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]'
         uses: crazy-max/ghaction-github-status@v1
         with:
           pages_threshold: major_outage
           
       - name: Deploy to GitHub Pages 🚀
-        if: success() && github.actor != 'depbot'
+        if: success() && github.actor != 'dependabot[bot]' && github.actor != 'dependabot-preview[bot]'
         uses: crazy-max/ghaction-github-pages@v2
         with:
           target_branch: gh-pages
