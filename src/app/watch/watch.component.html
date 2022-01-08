@@ -124,7 +124,7 @@
           <mat-divider style="padding: 1px;"></mat-divider>
         </div>
 
-        <p *ngIf="videos.length == 0">No videos for this subreddit.</p>
+        <p *ngIf="videos.length === 0">No videos for this subreddit.</p>
         <button *ngIf="videos.length > 0" mat-button (click)="loadMore()">Load More</button>
       </ng-container>
     </div>
