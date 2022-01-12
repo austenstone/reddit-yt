@@ -248,7 +248,14 @@ export class WatchComponent implements OnInit {
     }
   }
 
-  onCustomSubredditChange(subreddit: RedditSubreddit): void {
+  onCustomSubredditChange2(event: Event): void {
+    return this.onCustomSubredditChange((event.target as HTMLInputElement).value);
+  }
+
+  onCustomSubredditChange(subredditName: string): void {
+    const subreddit: RedditSubreddit = {
+      name: subredditName
+    }
     if (subreddit) {
       this.videos = [];
       this.currentSubreddit = subreddit;

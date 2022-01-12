@@ -123,12 +123,22 @@
         "deploy": {
           "builder": "angular-cli-ghpages:deploy",
           "options": {}
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
         }
       }
     }
   },
   "defaultProject": "reddit-yt",
   "cli": {
-    "analytics": "c4debcaf-682c-4aaf-899f-9d07655447c4"
+    "analytics": "c4debcaf-682c-4aaf-899f-9d07655447c4",
+    "defaultCollection": "@angular-eslint/schematics"
   }
 }

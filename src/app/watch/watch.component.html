@@ -74,8 +74,8 @@
       <mat-form-field *ngIf="customSubreddit">
         <span matPrefix>/r/</span>
         <mat-label>Subreddit</mat-label>
-        <input matInput placeholder="videos" [(value)]="customSubredditName"
-          (input)="onCustomSubredditChange({ name: $event.target.value})">
+        <input matInput type="text" placeholder="videos" [value]="customSubredditName"
+          (input)="onCustomSubredditChange2($event)">
       </mat-form-field>
 
       <mat-form-field>
@@ -124,15 +124,15 @@
           <mat-divider style="padding: 1px;"></mat-divider>
         </div>
 
-        <p *ngIf="videos.length == 0">No videos for this subreddit.</p>
+        <p *ngIf="videos.length === 0">No videos for this subreddit.</p>
         <button *ngIf="videos.length > 0" mat-button (click)="loadMore()">Load More</button>
       </ng-container>
     </div>
   </mat-drawer>
 
   <div class="player">
-    <youtube-player (ready)="onPlayerReady($event)" (stateChange)="onPlayerStateChange($event)" width="100%"
-      height="100%" [videoId]="currentVideo?.youtubeId"></youtube-player>
+    <youtube-player (ready)="onPlayerReady($event)" (stateChange)="onPlayerStateChange($event)"
+      [videoId]="currentVideo?.youtubeId" width="100%" height="100%"></youtube-player>
   </div>
 </mat-drawer-container>
 
