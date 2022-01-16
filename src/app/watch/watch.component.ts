@@ -179,7 +179,7 @@ export class WatchComponent implements OnInit {
       this.youtubePlayer.videoId = this.currentVideo.youtubeId;
       this.openSnackBar(`Playing - ${this.currentVideo.title}`);
       this.youtubePlayer.playVideo();
-      this.currentVideo.playing = true;
+      // this.currentVideo.playing = true;
       this.currentVideo.watched = true;
 
       this.storageService.storeVideos(this.videos.map((v) => {
@@ -337,6 +337,7 @@ export class WatchComponent implements OnInit {
     if (nextVideo) {
       this.selectVideo(nextVideo.youtubeId);
     }
+    setTimeout(() => this.playVideo(), 100)
   }
 
   private initYouTube(): void {

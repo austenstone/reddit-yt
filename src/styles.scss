@@ -1,5 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
-@use '@angular/material' as mat;
+@use "@angular/material" as mat;
 
 html,
 body {
@@ -70,4 +70,8 @@ body {
 a {
   color: mat.get-color-from-palette($candy-app-primary, 500);
   text-decoration: none;
+}
+
+.mat-menu-panel {
+  min-width: 0px !important;
 }
