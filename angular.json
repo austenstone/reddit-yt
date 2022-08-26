@@ -136,9 +136,10 @@
       }
     }
   },
-  "defaultProject": "reddit-yt",
   "cli": {
     "analytics": "c4debcaf-682c-4aaf-899f-9d07655447c4",
-    "defaultCollection": "@angular-eslint/schematics"
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   }
 }
