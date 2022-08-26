@@ -1,0 +1,89 @@
+{
+  "configVersion": 1,
+  "timestamp": 1661510539763,
+  "index": "/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/favicon.ico",
+        "/index.html",
+        "/main.a3d4e12051a371e3.js",
+        "/manifest.webmanifest",
+        "/polyfills.ea3d77de66924d67.js",
+        "/runtime.b7cf926064d3a7ad.js",
+        "/styles.a4b982a8757013f2.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/assets/debug.log",
+        "/assets/icons/icon-128x128.png",
+        "/assets/icons/icon-144x144.png",
+        "/assets/icons/icon-152x152.png",
+        "/assets/icons/icon-192x192.png",
+        "/assets/icons/icon-384x384.png",
+        "/assets/icons/icon-512x512.png",
+        "/assets/icons/icon-72x72.png",
+        "/assets/icons/icon-96x96.png",
+        "/assets/img/Reddit_Lockup_OnDark.png",
+        "/assets/img/reddit-yt-logo-circle.png",
+        "/assets/img/reddit-yt-logo.png"
+      ],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [],
+  "hashTable": {
+    "/assets/debug.log": "84a3b3ebb23e0e1d7fd59c3cca224767a3cf900f",
+    "/assets/icons/icon-128x128.png": "acb48320743df2c42ca3999946ae17e0e976a2ce",
+    "/assets/icons/icon-144x144.png": "4adee81dcde434b5e22b6cdb8b7672e9699897dc",
+    "/assets/icons/icon-152x152.png": "c5e81e421b3922fde9e294d50b85acd39eadbded",
+    "/assets/icons/icon-192x192.png": "d12e356f8ecd28276e867f86e25480ccd1a5a307",
+    "/assets/icons/icon-384x384.png": "cfd461c042fa9305974074d64818e152d3aed32b",
+    "/assets/icons/icon-512x512.png": "1289f019c23f1989532d3b56169f43e78b4f3f78",
+    "/assets/icons/icon-72x72.png": "07f8661a59219b4722ed799743c1f98919ee8ba3",
+    "/assets/icons/icon-96x96.png": "0fb9898bfe8921bc184de07510f802a1d7cc1d94",
+    "/assets/img/Reddit_Lockup_OnDark.png": "826e2b49024d28b91b64137d4ff6bc9df5ad828e",
+    "/assets/img/reddit-yt-logo-circle.png": "5ed51c6dfa2bd94eeec44119f843b9bb838a179a",
+    "/assets/img/reddit-yt-logo.png": "e0009f63c4f6206f49deaf0f27e97fd1f2b5262e",
+    "/favicon.ico": "d5ef52c34ce0192b025ba47d919a313511768445",
+    "/index.html": "95da103a51a05f7a7d8110217aaf32a57c42c79d",
+    "/main.a3d4e12051a371e3.js": "00a280721e25b865e1a8cc8423f8aa95bcd5b2dc",
+    "/manifest.webmanifest": "10e71991219b9b7e9cc2f954dd37abc41961379c",
+    "/polyfills.ea3d77de66924d67.js": "aa3837047c20c9b78e533d3b1b34f177205846d6",
+    "/runtime.b7cf926064d3a7ad.js": "3c0c4311826a69d54bce7ff9ed667b3d52201af5",
+    "/styles.a4b982a8757013f2.css": "d5ff00d031029ef12cd7c4245017bb8793cb308d"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ],
+  "navigationRequestStrategy": "performance"
+}
