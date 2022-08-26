@@ -1,4 +1,8 @@
+import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { WatchComponent } from './watch.component';
 
@@ -8,9 +12,15 @@ describe('WatchComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ WatchComponent ]
+      imports: [
+        HttpClientModule,
+        MatSnackBarModule,
+        MatDialogModule,
+        MatMenuModule
+      ],
+      declarations: [WatchComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
